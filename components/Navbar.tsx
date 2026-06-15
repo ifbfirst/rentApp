@@ -2,15 +2,15 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Home, User, Bell, Menu, X} from "lucide-react"
+import { Home, User, Bell, Menu, X, LogIn} from "lucide-react"
 import { usePathname } from "next/navigation";
 
 
 
 const menuConfig= [
-    { name: 'Home', href: '/', access: 'public' },
-    { name: 'Properties', href: '/properties', access: 'public' },
-    { name: 'Add Property', href: '/properties/add', access: 'login' },
+    { name: 'Home', href: '/', isPrivate: false },
+    { name: 'Properties', href: '/properties', isPrivate: false },
+    { name: 'Add Property', href: '/properties/add', isPrivate: true },
 ];
 
 
@@ -65,14 +65,20 @@ const Navbar = () => {
                      <div className='flex space-x-2'>
                       {menuConfig.map((item) => {
                         const isActive = pathname === item.href;
-                        return item.access === 'public' && <Link
-                          key={item.name}
-                          href={item.href}
-                          className={`text-white rounded-md px-3 py-2 ${isActive ? 'bg-gray-800' : 'hover:bg-gray-900'}`}
-                        >
-                          {item.name}
-                        </Link>}
-                      )}
+                        const isVisible =
+                          !item.isPrivate || (isLoggedIn && item.isPrivate);
+                        if (!isVisible) return null;
+
+                        return (
+                          <Link
+                            key={item.name}
+                            href={item.href}
+                            className={`text-white rounded-md px-3 py-2 ${isActive ? "bg-gray-800" : "hover:bg-gray-900"}`}
+                          >
+                            {item.name}
+                          </Link>
+                        );
+                      })}
                       
                      </div>
                    </div>
@@ -81,15 +87,16 @@ const Navbar = () => {
                  {/* <!-- Right Side Menu (Logged Out) --> */}
                  <div className='hidden md:block md:ml-6'>
                    <div className='flex items-center'>
-                     <button className='flex items-center text-white bg-gray-700 hover:bg-gray-900 hover:text-white rounded-md px-3 py-2'>
-                       <i className='fa-brands fa-google text-white mr-2'></i>
+                     <button className='flex items-center text-white bg-gray-700 hover:bg-gray-900 hover:text-white rounded-md px-3 py-2 cursor-pointer'>
+                      <LogIn className="h-6 w-6 text-white mr-2" strokeWidth={1.5}/>
                        <span>Login or Register</span>
                      </button>
                    </div>
                  </div>
        
                  {/* <!-- Right Side Menu (Logged In) --> */}
-                 <div className='absolute inset-y-0 right-0 flex items-center pr-2 md:static md:inset-auto md:ml-6 md:pr-0'>
+                 {isLoggedIn && (
+                 <div className='absolute inset-y-0 right-0 flex items-center pr-2 md:static md:inset-auto md:ml-6 md:pr-0 cursor-pointer'>
                    <div className='relative group'>
                      <button
                        type='button'
@@ -120,7 +127,7 @@ const Navbar = () => {
                           <User className="h-6 w-6 m-1 text-gray-400 hover:text-white  cursor-pointer " strokeWidth={1.5}/>
                        </button>
                      </div>
-       
+                
                      {/* <!-- Profile dropdown --> */}
                     {isProfileMenuOpen && (
                      <div
@@ -161,6 +168,7 @@ const Navbar = () => {
                      </div>)}
                    </div>
                  </div>
+                 )}
                </div>
              </div>
        
@@ -170,20 +178,25 @@ const Navbar = () => {
                  <div className='space-y-1 px-2 pb-3 pt-2'>
                   {menuConfig.map((item) => {
                     const isActive = pathname === item.href;
-                      return item.access === 'public' && (
-                        <Link
-                          key={item.name}
-                          href={item.href}
-                          className={`block rounded-md px-3 py-2 text-base font-medium ${isActive ? 'bg-gray-800 text-white' : 'text-gray-300 hover:bg-gray-700'}`}
-                        >
-                          {item.name}
-                    </Link>)}
-                  )}
+                    const isVisible =
+                      !item.isPrivate || (isLoggedIn && item.isPrivate);
+                    if (!isVisible) return null;
+
+                    return (
+                      <Link
+                        key={item.name}
+                        href={item.href}
+                        className={`block rounded-md px-3 py-2 text-base font-medium ${isActive ? "bg-gray-800 text-white" : "text-gray-300 hover:bg-gray-700"}`}
+                      >
+                        {item.name}
+                      </Link>
+                    );
+                  })}
                    
-                 <button className='flex items-center text-white bg-gray-700 hover:bg-gray-900 hover:text-white rounded-md px-3 py-2 my-4'>
-                   <i className='fa-brands fa-google mr-2'></i>
+                 {!isLoggedIn && <button className='flex items-center text-white bg-gray-700 hover:bg-gray-900 hover:text-white rounded-md px-3 py-2 my-4'>
+                   <LogIn className='h-6 w-6 mr-2' strokeWidth={1.5} />
                    <span>Login or Register</span>
-                 </button>
+                 </button>}
                </div>
              </div>)}
            </nav>

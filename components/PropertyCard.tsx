@@ -1,7 +1,16 @@
 import Link from "next/link"
 import Image from "next/image"
+import { Bed, Bath, Ruler, Banknote, MapPin } from "lucide-react"
+import { formatDisplayRate, getAvailableRates } from "@/lib/getDisplayRate"
+import { Property } from "@/types/Property";
 
-const PropertyCard = ({ property }: { property: any }) => {
+
+export interface PropertyCardProps {
+      property: Property;
+    }
+    
+    const PropertyCard = ({ property }: PropertyCardProps) => {
+  const availableRates = getAvailableRates(property.rates);
 
 return (
 <div className='rounded-xl shadow-md relative'>
@@ -20,20 +29,20 @@ return (
           <h3 className='text-xl font-bold'>{property.name}</h3>
         </div>
         <h3 className='absolute top-[10px] right-[10px] bg-white px-4 py-2 rounded-lg text-blue-500 font-bold text-right md:text-center lg:text-right'>
-          {property.rates.monthly ?? '-'} $/mo
+          {formatDisplayRate(property.rates)}
         </h3>
 
         <div className='flex justify-center gap-4 text-gray-500 mb-4'>
-          <p>
-            <i className='fa-solid fa-bed'></i> {property.beds}
+          <p className='flex items-center gap-1'>
+            <Bed className='h-4 w-4' strokeWidth={1.5} /> {property.beds}
             <span className='md:hidden lg:inline'> Beds</span>
           </p>
-          <p>
-            <i className='fa-solid fa-bath'></i> {property.baths}
+          <p className='flex items-center gap-1'>
+            <Bath className='h-4 w-4' strokeWidth={1.5} /> {property.baths}
             <span className='md:hidden lg:inline'> Baths</span>
           </p>
-          <p>
-            <i className='fa-solid fa-ruler-combined'></i> {
+          <p className='flex items-center gap-1'>
+            <Ruler className='h-4 w-4' strokeWidth={1.5} /> {
               property.square_feet
             }
             <span className='md:hidden lg:inline'> sqft</span>
@@ -41,19 +50,19 @@ return (
         </div>
 
         <div className='flex justify-center gap-4 text-green-900 text-sm mb-4'>
-          <p>
-            <i className='fa-solid fa-money-bill'></i> Weekly
-          </p>
-          <p>
-            <i className='fa-solid fa-money-bill'></i> Monthly
-          </p>
+          {availableRates.map((rate) => (
+            <p key={rate.period} className='flex items-center gap-1'>
+              <Banknote className='h-4 w-4' strokeWidth={1.5} />
+              {rate.name} ({rate.amount} {rate.suffix})
+            </p>
+          ))}
         </div>
 
         <div className='border border-gray-100 mb-5'></div>
 
         <div className='flex flex-col lg:flex-row justify-between mb-4'>
-          <div className='flex align-middle gap-2 mb-4 lg:mb-0'>
-            <i className='fa-solid fa-location-dot text-lg text-orange-700'></i>
+          <div className='flex items-center gap-2 mb-4 lg:mb-0'>
+            <MapPin className='h-5 w-5 text-orange-700' strokeWidth={1.5} />
             <span className='text-orange-700'>
               {' '}
               {property.location.city}, {property.location.state}

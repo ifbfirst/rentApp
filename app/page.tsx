@@ -1,13 +1,20 @@
 
-import Link from "next/link";
+import Footer from "@/components/Footer";
+import Hero from "@/components/Hero";
+import HomeProperties from "@/components/HomeProperties";
+import InfoBoxes from "@/components/InfoBoxes";
 
-export default function Home() {
+
+export  const HomePage =() =>{
+
   return (
-    <main className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <h1>Home</h1>
-      <Link href="/properties" className="text-3xl">Go to properties</Link>
-      
-      
-    </main>
+    <>
+      <Hero /> 
+      <InfoBoxes />
+      <HomeProperties/>
+      <Footer/>
+    </>
   );
 }
+
+export default HomePage;
